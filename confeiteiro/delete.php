@@ -1,5 +1,5 @@
 <?php
-  include 'conn.php';
+  include '../utils/conn.php';
 
   $idBolos = $_POST["idBolos"];
   
