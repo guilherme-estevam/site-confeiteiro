@@ -1,31 +1,6 @@
 <?php
-  include 'conn.php';
-
-  // Save File Image 
-  //pasta dentro do HTDOCS onde os arquivos serão salvos.
-  $target_dir = "../images/"; 
-
-  $target_file = $target_dir.basename($_FILES["foto"]["name"]);
-
-  $uploadOk = 1; //Flag
-
-  $fileExtesion = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-  // Check if file already exists
-  if (file_exists($target_file))
-    $uploadOk = 0;
-
-  // Check file size
-  if ($_FILES["foto"]["size"] > 2097152) // 2MB 
-    $uploadOk = 0;
-
-  // Allow certain file formats
-  if ($fileExtesion != "jpg" && $fileExtesion != "png")
-    $uploadOk = 0;
-
-  // Check if $uploadOk is ok
-  if ($uploadOk != 0)
-    move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file);
+  include '../utils/conn.php';
+  include '../utils/uploadImage.php';
 
   $idBolos = $_POST["idBolos"];
   $foto = $target_file;
