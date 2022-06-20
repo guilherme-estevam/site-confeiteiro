@@ -11,53 +11,18 @@
 <body>
   <div class="container" style="text-align: center;width: 100%;padding-top: 5%;">
     <?php
-      include 'conn.php';
+      include '../utils/conn.php';
 
-      if($_FILES["foto"]["name"] != "") {
+      if($_FILES["foto"]["name"] != "")
+        include '../utils/uploadImage.php';
 
-        // Save File Image 
-        //pasta dentro do HTDOCS onde os arquivos serão salvos.
-        $target_dir = "../images/"; 
-  
-        $target_file = $target_dir.basename($_FILES["foto"]["name"]);
-  
-        $uploadOk = 1; //Flag
-  
-        $fileExtesion = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-  
-        // Check if file already exists
-        if (file_exists($target_file)) {
-          $uploadOk = 0;
-          echo "<h3>Essa imagem já existe no banco.</h3>";
-        }
-  
-        // Check file size
-        if ($_FILES["foto"]["size"] > 2097152) { // 2MB 
-          $uploadOk = 0;
-          echo "<h3>Essa imagem é grande demais.</h3>";
-        }
-  
-        // Allow certain file formats
-        if ($fileExtesion != "jpg" && $fileExtesion != "png") {
-          $uploadOk = 0;
-          echo "<h3>Não aceitamos esse formato de imagem.</h3>";
-        }
-  
-        // Check if $uploadOk is ok
-        if ($uploadOk != 0) {
-          if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file))
-            echo "<h3>Imagem salva com Sucesso.</h3>";
-          else
-            echo "<h3>Não foi possível salvar sua Imagem.</h3>";
-        }
-      }
-
+      // Insert into mensagens
       $idBolos = $_POST["idBolos"];
       $cliente = $_POST["cliente"];
       $email = $_POST["email"];
       $telefone = $_POST["telefone"];
       $whatsapp = $_POST["whatsapp"];
-      $mensagem = $_POST["mensagem"];
+      $mensagem = $_POST["mensagem"] == "" ? NULL : $_POST["mensagem"];
       $imagem = $target_file;
 
       // A chave é uma chave primária com auto increment, por isso não precisamos adicionar ela no sql
@@ -68,27 +33,45 @@
       $stmt = mysqli_stmt_init($conn);  
       $stmt_prepared_okay = mysqli_stmt_prepare($stmt, $sql);
       // create a prepared statement
-      if($stmt_prepared_okay){
+      if($stmt_prepared_okay) {
         // Liga parametros com os marcadores
         mysqli_stmt_bind_param($stmt, "sssssss", $idBolos, $cliente, $email, $telefone, $whatsapp, $mensagem, $imagem);
         // executa a query
         mysqli_stmt_execute($stmt);
-        // close statement
-        mysqli_stmt_close($stmt);
-        echo "<h3>Mensagem enviada com Sucesso.</h3>";
-      } else 
+
+        // Insert into atendimento
+        $idMensagens = mysqli_stmt_insert_id($stmt);
+        $status = "Não Respondida";
+        $dataRecebimento = date("Y-m-d");
+        $dataResposta = NULL;
+        $finalizacao = NULL;
+
+        $newSql = "INSERT INTO `final-atendimento`(idMensagens, status, dataRecebimento, dataResposta, finalizacao) VALUES (?, ?, ?, ?, ?)";
+
+        $stmt_prepared_okay = mysqli_stmt_prepare($stmt, $newSql);
+        if($stmt_prepared_okay) {
+          mysqli_stmt_bind_param($stmt, "sssss", $idMensagens, $status, $dataRecebimento, $dataResposta, $finalizacao);
+          // executa a query
+          mysqli_stmt_execute($stmt);
+          echo "<h3>Mensagem enviada com Sucesso.</h3>";
+        } else
         echo "<h3>Não foi possível enviar sua Mensagem.</h3>";
+      } else 
+      echo "<h3>Não foi possível enviar sua Mensagem.</h3>";
+      
+      // close statement
+      mysqli_stmt_close($stmt);
       mysqli_close($conn);
     ?>
     <div class="row justify-content-md-center">
       <div class="col-6">
-        <button type="submit" class="btn btn-primary" onclick="backToIndex()">Voltar para o Início</button>
+        <br><br><button type="submit" class="btn btn-primary" onclick="backToIndex()">Voltar para o Início</button>
       </div>
     </div>
   </div>
 </body>
 <script>
-function backToIndex(idBolos) {
+function backToIndex() {
   window.location.href = "./index.php?filtro=Todos";
 }
 </script>
