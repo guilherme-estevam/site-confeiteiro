@@ -12,7 +12,7 @@
   <div class="container" style="text-align: center;width: 100%;padding-top: 5%;">
     <div class="row align-items-center" >
       <div class="col">
-        <h1> Bolos Disponíveis</h1>
+        <h1>Bolos Disponíveis</h1>
       </div>
       <div class="col dropdown-center dropdown-menu-dark">
         <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="dropdown2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -56,8 +56,8 @@
           <tr>
             <th scope="col">Foto</th>
             <th scope="col">Descrição</th>
-            <th scope="col">Valor</th>
-            <th scope="col">Número de Fatias</th>
+            <th scope="col">Valor do Bolo</th>
+            <th scope="col">N° de Fatias</th>
             <th scope="col">Data de Inclusão</th>
             <th scope="col">Categoria</th>
             <th scope="col">Editar</th>
@@ -76,10 +76,10 @@
               $fatias=$row["fatias"];
               $data=$row["data"];
               $categoria=$row["categoria"];
-              echo '<tr><td><img class="img-thumbnail img-responsive" src='.$foto.' alt="Bolo de Chocolate" width="540" height="360"></td>';
+              echo '<tr><td><img class="img-thumbnail img-responsive" src='.$foto.' width="540" height="360"></td>';
               echo '<td>'.$descricao.'</td>';
-              echo '<td>'.$valor.'R$ a fatia</td>';
-              echo '<td>'.$fatias.' Disponíveis</td>';
+              echo '<td>'.$valor.'</td>';
+              echo '<td>'.$fatias.' no Total</td>';
               echo '<td>'.$data.'</td>';
               echo '<td>'.$categoria.'</td>';
               echo "<td><button type='button' class='btn btn-info' onclick ='cakeChoosen(String($idBolos))'>Enviar Mensagem</button></td>";
@@ -89,7 +89,7 @@
 
             header('Content-type: text/html; charset=utf-8');
 
-            include 'conn.php';
+            include '../utils/conn.php';
 
             if($filtro == "Todos" or $filtro == "") {
               $sql = "SELECT * FROM `final-bolos` ORDER BY idBolos";
