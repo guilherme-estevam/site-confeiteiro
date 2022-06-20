@@ -18,8 +18,8 @@
         <tr>
           <th scope="col">Foto</th>
           <th scope="col">Descrição</th>
-          <th scope="col">Valor</th>
-          <th scope="col">Número de Fatias</th>
+          <th scope="col">Valor do Bolo</th>
+          <th scope="col">N° de Fatias</th>
           <th scope="col">Data de Inclusão</th>
           <th scope="col">Categoria</th>
           <th scope="col">Editar</th>
@@ -29,22 +29,19 @@
         <?php
           header('Content-type: text/html; charset=utf-8');
 
-          include 'conn.php';
+          include '../utils/conn.php';
 
           $sql = "SELECT * FROM `final-bolos` ORDER BY idBolos";
-          
+
           $result = mysqli_query($conn, $sql);
-          
-          if (!$result) {
-              die("Falha na Execução da Consulta: " . $sql ."<br>" .
-              mysqli_error($conn));
-          }
-          
-          if (mysqli_num_rows($result) == 0) {
-              echo "Não foram encontradas linhas, nada para mostrar <br>";
-          }
-          
-          while ($row = mysqli_fetch_assoc($result)) {
+
+          if(!$result)
+            die("Falha na Execução da Consulta: ". $sql."<br>".mysqli_error($conn));
+
+          if(mysqli_num_rows($result) == 0)
+            echo "Não foram encontradas linhas, nada para mostrar <br>";
+
+          while($row = mysqli_fetch_assoc($result)) {
               $idBolos=$row["idBolos"];
               $foto=$row["foto"];
               $descricao=$row["descricao"];
@@ -52,15 +49,15 @@
               $fatias=$row["fatias"];
               $data=$row["data"];
               $categoria=$row["categoria"];
-              echo '<tr><td><img class="img-thumbnail img-responsive" src='.$foto.' alt="Bolo de Chocolate" width="540" height="360"></td>';
+              echo '<tr><td><img class="img-thumbnail img-responsive" src='.$foto.' width="540" height="360"></td>';
               echo '<td>'.$descricao.'</td>';
-              echo '<td>'.$valor.'R$ a fatia</td>';
-              echo '<td>'.$fatias.' Disponíveis</td>';
+              echo '<td>'.$valor.'</td>';
+              echo '<td>'.$fatias.' no Total</td>';
               echo '<td>'.$data.'</td>';
               echo '<td>'.$categoria.'</td>';
               echo "<td><button type='button' class='btn btn-info' data-bs-toggle='modal' data-bs-target='#updateModal' onclick ='openModal(String($idBolos))'>Editar</button></td></tr>";
           }
-          
+
           mysqli_free_result($result);
         ?>
       </tbody>
